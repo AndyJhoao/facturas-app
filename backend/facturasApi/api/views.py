@@ -1,14 +1,48 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response 
 from xml.etree import ElementTree
 from datetime import datetime
+from rest_framework.authtoken.models import Token
+from django.shortcuts import get_object_or_404
 
 from .models import Factura
-from .serializers import FacturaSerializer
+from django.contrib.auth.models import User
+from .serializers import FacturaSerializer, UserSerializer
 
+@api_view(['POST'])
+def login(request):
 
+    user = get_object_or_404(User, username=request.data['username'])
 
+    if not user.check_password(request.data['password']):
+        return Response({"error":"contraseña incorrecta"},status=400)
+
+    token, created = Token.objects.get_or_create(user=user)
+
+    serializer = UserSerializer(instance=user)
+
+    return Response({'token':token.key,'user':serializer.data},status=200)
+    
+@api_view(['POST'])
+def register(request):
+    serializer = UserSerializer(data=request.data)
+    if(serializer.is_valid()):
+        serializer.save()
+
+        user = User.objects.get(username=serializer.data['username'])
+        user.set_password(serializer.data['password'])
+        user.save()
+
+        # token = Token.objects.create(user=user)
+        return Response({'user':serializer.data['username']},status=201)
+    else:
+        return Response(serializer.errors, status=400)
+    
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def obtenerFacturas(request):
     facturas = Factura.objects.all()
     serializer = FacturaSerializer(facturas, many=True)
@@ -16,7 +50,10 @@ def obtenerFacturas(request):
         return Response(serializer.data)
     else:
         return Response({'error': 'Sin facturas'}, status=404)
+
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def obtenerFactura(request,id):
     try:
         factura = Factura.objects.get(id=id)
@@ -26,6 +63,8 @@ def obtenerFactura(request,id):
     return Response(serializer.data)
 
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def validarXML(request):
     xml_file = request.FILES.get('xmlFact')
     formData = request.data
@@ -95,6 +134,8 @@ def crearRegistro(data):
         return Response({'error':'Ya existe la factura con ese UUID'},status=409)
 
 @api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def actualizarFactura(request,id):
     try:
         factura = Factura.objects.get(id=id)
@@ -108,6 +149,8 @@ def actualizarFactura(request,id):
     return Response({'error': 'Datos no validos para el registro'}, status=404)
 
 @api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def eliminarFactura(request,id):
     try:
         factura = Factura.objects.get(id=id)
