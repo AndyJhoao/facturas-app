@@ -1,17 +1,34 @@
-import { Link, useLoaderData, useNavigate } from "react-router-dom";
+import { Link, useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
 import del from "../assets/del.svg";
 import edit from "../assets/edit.svg";
 import create from "../assets/create.svg";
 import Swal from 'sweetalert2'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Home(){
-    const { facturas } = useLoaderData()
+    const navigate = useNavigate()
+    const { facturas , unauthorized} = useLoaderData()
     const [facturasList, setFacturasList] = useState(facturas)
+
+    const { setIsAuthenticated } = useOutletContext()
+
+    useEffect(() => {
+        if(unauthorized){
+            navigate('/login')
+        }else{
+            const token = localStorage.getItem('token')
+            if (!token) {
+                setIsAuthenticated(false)
+            } else {
+                setIsAuthenticated(true)
+            }
+        }
+    }, [setIsAuthenticated])
 
     const handleClick = (e,factura) => {
         e.preventDefault()
         Swal.fire({
+            customClass: "alert",
             title: "¿Seguro que quieres eliminar esta Factura?",
             text: `UUID: ${factura.id_factura}/n Valor: $${factura.value}`,
             showDenyButton: true,
@@ -23,7 +40,8 @@ export default function Home(){
                     if (!('error' in res)) {
                         setFacturasList(facturasList.filter(fact => fact.id !== factura.id))
                         Swal.fire({
-                            position: "top-end",
+                            customClass: "alert",
+                            // position: "top-end",
                             icon: "success",
                             title: `Se ha eliminado con éxito`,
                             text: `La factura con UUID: ${factura.id_factura}`,
@@ -32,7 +50,8 @@ export default function Home(){
                         })
                     }else {
                         Swal.fire({
-                            position: "top-end",
+                            customClass: "alert",
+                            // position: "top-end",
                             icon: "error",
                             title: res.error || "Error desconocido",
                             showConfirmButton: false,
@@ -45,33 +64,37 @@ export default function Home(){
     }
     const eliminarFactura = async (id) => {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/facturas/delete/${id}/`, {
+            const response = await fetch(`http://127.0.0.1:8000/api/facturas/delete/${id}`, {
                 method: 'DELETE',
+                headers: {
+                    'Authorization':'Token ' + localStorage.getItem('token')
+                }
             });
             return response.json();
             
         } catch (error) {
+            console.log(error)
             Swal.fire({
-                position: "top-end",
+                customClass: "alert",
+                // position: "top-end",
                 icon: "error",
                 title: "Hubo un problema de conexión",
                 text: "Por favor, inténtelo de nuevo",
                 showConfirmButton: false,
                 timer: 2500
             });
-            return response.json();
         }
     }
 
     return (
         <>
-            <div>
-                <div className="table">
+            <div className="container-form">
+                <div className="table ajuste-centro">
                     <h3>
                         Bienvenido
                     </h3>
                 </div>
-                <div className="table" style={{alignItems:'end', marginRight:'20px'}}>
+                <div className="table button-res ajuste-centro" style={{alignItems:'end', marginRight:'20px'}}>
                     <Link to="facturas/new/" className="linkButton center" style={{fontSize:'1rem', color:'white', backgroundColor:'#16a00a'}}> <p className="center" style={{height:'20px', padding:'0px 0px 0px 5px', margin:'3px 0px 3px 10px', alignItems:'end'}}>Factura</p> <img style={{paddingRight:'5px'}} src={create} alt="create" width={22} height={22} /></Link>
                 </div>
                 <div className="table-header">

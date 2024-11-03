@@ -15,11 +15,12 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #c0c2da;
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: #eec16e;
+  text-decoration: underline;
 }
 
 body {
@@ -106,6 +107,18 @@ body {
   text-align: center;
 }
 
+.navbar{
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  width: 65%;
+}
+
+.nav-link{
+  width: 100px;
+  color: wheat !important;
+}
+
 .right{
   text-align: end !important;
 }
@@ -143,7 +156,7 @@ body {
   display: flex;
   align-items: center;
   flex-direction: column;
-  width: 50%;
+  width: 100%;
 }
 
 .labelFact{
@@ -215,6 +228,26 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+.form-container_inputs{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.alert{
+  inset: 0;
+}
+
+.container-form{
+  width: 100%;
+  margin-top: 100px;
+}
+
+.meta{
+  width: 100% !important;
+  margin-top: 100px;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -225,5 +258,118 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+@media (max-width: 1180px) {
+  .container-form{
+    width: 1200px;
+    margin-top: 100px;
+  }
+
+  .header {
+    width: 100%;
+    height: 120px;
+  }
+
+  .navbar {
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
+  }
+  .nav-link{
+    display: flex;
+    justify-content: center;
+  }
+  .form{
+    width: 100%;
+  }
+  .button-res{
+    align-items: center !important;
+    margin: 0 !important;
+  }
+
+  .ajuste-centro{
+    width: 100vw;
+  }
+
+  .button-res > a{
+    width: auto;
+    margin-bottom: 10px;
+  }
+}
+
+
+@media (max-width: 480px) {
+  .table-header, .row {
+    flex-direction: row;
+  }
+
+  .table-header{
+    flex-direction: row;
+  }
+
+  .button-res{
+    align-items: center;
+    margin: 0;
+  }
+
+  .button-res > a{
+    width: auto;
+    margin-bottom: 10px;
+  }
+
+  .alert{
+    top: 1% !important;
+    inset: 1;
+    width: 80%;
+  }
+
+  .form-container_inputs{
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .form-container_inputs > input {
+    width: 65%;
+  }
+  .form-container_inputs > label {
+    width: 25%;
+    text-align: end;
+  }
+
+  .form{
+    width: 100%;
+  }
+
+  .header {
+    width: 100%;
+    height: 120px;
+  }
+
+  .navbar {
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
+  }
+  .nav-link{
+    display: flex;
+    justify-content: center;
+  }
+
+  .labelFact {
+    width: 100%;
+    text-align: start; 
+  }
+
+  .inputFact {
+    width: 100%;
+    font-size: 0.9rem; 
+  }
+
+  button, .linkButton {
+    width: 100%;
   }
 }
