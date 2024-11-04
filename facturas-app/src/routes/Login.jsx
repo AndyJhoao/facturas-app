@@ -25,6 +25,24 @@ export async function loginAPI({request}) {
         });
         return redirect(`/home`)
     }else {
+        const responseData = await response.json();
+        if('detail' in responseData){
+            Swal.fire({
+                customClass: "alert",
+                icon: "error",
+                title: "No existe el Usuario",
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }else if('error' in responseData){
+            Swal.fire({
+                customClass: "alert",
+                icon: "error",
+                title: "Contraseña incorrecta",
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
         return redirect(`/login`);
     }
 
