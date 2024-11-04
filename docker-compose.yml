@@ -1,0 +1,47 @@
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: adminroot
+      MYSQL_DATABASE: bd_facturas
+
+  backend:
+    build:
+      context: ./facturasApi
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+      - static:/app/static
+
+  frontend:
+    build: 
+      context: ./facturas-app
+    depends_on:
+      - backend
+    volumes:
+      - facturas-app:/app
+
+  nginx:
+    build: 
+      context: ./nginx
+    volumes:
+      - static:/app/static
+      - facturas-app:/var/www/facturas-app
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+      - backend
+      - frontend
+
+volumes:
+  db_data:
+  static:
+  facturas-app:
+  .:
