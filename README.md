@@ -174,7 +174,7 @@ Regresamos a la raiz para ejecutar el docker-compose
 En caso de que no levante el servicio de nginx, volveremos a reiniciar el servicio de nginx para que arranque correctamente.
 
 ```bash
-  docker restart nginx
+  docker restart facturas-app-nginx-1
 ```
 
 En caso de que no funcione correctamente el backend y mande error de tablas, ejecutaremos las migraciones correspondientes
