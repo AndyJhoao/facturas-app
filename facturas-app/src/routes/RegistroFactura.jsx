@@ -138,7 +138,7 @@ export default function RegistroFactura(){
     
     const handleSubmit = (e,data) => {
         if (e.target.name === "guardar") {
-            if(data.tipo_comprobante.length > 1){
+            if(data.tipo_comprobante.length >= 1){
                 Swal.fire({
                     customClass: "alert",
                     title:'Error en validaciones',
